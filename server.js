@@ -34,6 +34,7 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/pulse', pulseRoutes);
 app.use('/api/competitors/pricing', pricingRoutes);
+app.use('/api/competitors', pricingRoutes);
 app.use('/api/reviews/tracker', reviewsRoutes);
 app.use('/api/suppliers/discounts', suppliersRoutes);
 app.use('/api/ai', aiRoutes);

@@ -1845,3 +1845,245 @@ body {
 .mt-xl { margin-top: 32px; }
 .text-center { text-align: center; }
 .flex-align-center { display: flex; align-items: center; gap: 8px; }
+
+/* ==========================================================================
+   Responsive Breakpoints & Mobile Optimization
+   Devices Supported: Mobile (320px-640px), Tablets (641px-1024px), Laptops (1025px+)
+   ========================================================================== */
+
+/* Large Tablets & Small Laptops */
+@media (max-width: 1100px) {
+  .dashboard-grid-2col {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-workbench-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tech-stack-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets (Portrait & Landscape) */
+@media (max-width: 868px) {
+  .app-header {
+    height: auto;
+    padding: 12px 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .live-market-badge {
+    max-width: 260px;
+  }
+
+  .sub-nav {
+    padding: 0 16px;
+    overflow-x: auto;
+  }
+
+  .nav-tabs {
+    flex-shrink: 0;
+  }
+
+  .workspace-selector {
+    display: none;
+  }
+
+  .main-content {
+    padding: 20px 16px;
+  }
+
+  .suppliers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tiers-pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .reviews-stats-banner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .slide-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .slide-headline {
+    font-size: 28px;
+  }
+
+  .pitch-slide-stage {
+    padding: 24px 20px;
+  }
+}
+
+/* Mobile Phones (iPhone, Pixel, Galaxy) */
+@media (max-width: 640px) {
+  .brand-title {
+    font-size: 18px;
+  }
+
+  .brand-badge {
+    display: none;
+  }
+
+  .live-market-badge {
+    display: none;
+  }
+
+  .ai-status-pill {
+    display: none;
+  }
+
+  .header-right {
+    justify-content: space-between;
+  }
+
+  .btn-pitch {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  .btn-pitch .keyboard-hint {
+    display: none;
+  }
+
+  .btn-outline {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .user-pill {
+    padding: 3px;
+  }
+
+  .nav-tabs {
+    gap: 4px;
+  }
+
+  .nav-tab {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .nav-tab .tab-badge {
+    display: none;
+  }
+
+  .main-content {
+    padding: 16px 12px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .metric-card {
+    padding: 16px;
+  }
+
+  .metric-value {
+    font-size: 24px;
+  }
+
+  .reviews-stats-banner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .product-chip {
+    min-width: 170px;
+    padding: 10px 14px;
+  }
+
+  .chart-footer-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .supplier-price-matrix {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .supplier-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .action-buttons-group {
+    flex-direction: column;
+  }
+
+  .slide-headline {
+    font-size: 22px;
+  }
+
+  .slide-subhead {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .pitch-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    max-width: 100vw;
+  }
+
+  .pitch-header, .pitch-footer {
+    padding: 0 16px;
+  }
+
+  .pitch-nav-dots {
+    display: none;
+  }
+
+  .tech-stack-row {
+    grid-template-columns: 1fr;
+  }
+
+  .toast {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
+
