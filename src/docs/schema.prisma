@@ -1,0 +1,185 @@
+// MarketPulse AI - Production Prisma Schema
+// Optimized for PostgreSQL + TimescaleDB for time-series pricing logs
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  ANALYST
+  VIEWER
+}
+
+enum ScrapeFrequency {
+  HOURLY
+  TWICE_DAILY
+  DAILY
+  WEEKLY
+}
+
+enum AlertChannel {
+  EMAIL
+  SMS
+  SLACK
+  WEBHOOK
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+model User {
+  id            String             @id @default(uuid())
+  email         String             @unique
+  name          String?
+  avatarUrl     String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  memberships   WorkspaceMember[]
+  subscriptions UserSubscription[]
+}
+
+model Workspace {
+  id               String            @id @default(uuid())
+  name             String
+  slug             String            @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  members          WorkspaceMember[]
+  trackedItems     TrackedItem[]
+  alertConfigs     AlertConfig[]
+  generatedPrompts AdPrompt[]
+}
+
+model WorkspaceMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        Role      @default(ADMIN)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+model TrackedItem {
+  id                     String           @id @default(uuid())
+  workspaceId            String
+  name                   String
+  category               String
+  itemType               String           // 'COMPETITOR_PRODUCT' | 'SUPPLIER_CATALOG'
+  targetUrl              String
+  competitorBrand        String?
+  currentPrice           Decimal?         @db.Decimal(10, 2)
+  previousPrice          Decimal?         @db.Decimal(10, 2)
+  alertThresholdPercent  Decimal          @default(10.0) @db.Decimal(5, 2)
+  frequency              ScrapeFrequency  @default(DAILY)
+  isActive               Boolean          @default(true)
+  lastScrapedAt          DateTime?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+
+  workspace              Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  priceLogs              PriceLog[]
+  reviewLogs             ReviewLog[]
+}
+
+// TimescaleDB Hypertable partitioned by timestamp
+model PriceLog {
+  id            String      @id @default(uuid())
+  trackedItemId String
+  timestamp     DateTime    @default(now())
+  price         Decimal     @db.Decimal(10, 2)
+  originalPrice Decimal?    @db.Decimal(10, 2)
+  currency      String      @default("USD")
+  stockStatus   String      @default("IN_STOCK")
+  rawHtmlHash   String?
+
+  trackedItem   TrackedItem @relation(fields: [trackedItemId], references: [id], onDelete: Cascade)
+
+  @@index([trackedItemId, timestamp(sort: Desc)])
+}
+
+model ReviewLog {
+  id            String      @id @default(uuid())
+  trackedItemId String
+  platform      String      @default("GOOGLE_REVIEWS") // 'GOOGLE_REVIEWS' | 'AMAZON' | 'TRUSTPILOT'
+  author        String?
+  rating        Int
+  reviewText    String
+  sentiment     String      // 'POSITIVE' | 'NEUTRAL' | 'CRITICAL_NEGATIVE'
+  painPoints    String[]
+  publishedAt   DateTime
+  ingestedAt    DateTime    @default(now())
+
+  trackedItem   TrackedItem @relation(fields: [trackedItemId], references: [id], onDelete: Cascade)
+
+  @@index([trackedItemId, publishedAt(sort: Desc)])
+}
+
+model SupplierDiscount {
+  id              String   @id @default(uuid())
+  supplierName    String
+  componentName   String
+  category        String
+  discountPercent Decimal  @db.Decimal(5, 2)
+  moq             Int
+  unitPrice       Decimal  @db.Decimal(10, 2)
+  regularPrice    Decimal  @db.Decimal(10, 2)
+  validUntil      DateTime
+  verified        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model AdPrompt {
+  id             String    @id @default(uuid())
+  workspaceId    String
+  campaignName   String
+  targetPlatform String
+  strategyAngle  String
+  adHooks        String[]
+  primaryAdCopy  String
+  headline       String
+  callToAction   String
+  creativePrompt String
+  targetAudience String
+  createdAt      DateTime  @default(now())
+
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model AlertConfig {
+  id          String       @id @default(uuid())
+  workspaceId String
+  channel     AlertChannel
+  destination String       // Email address, phone number, or webhook URL
+  minSeverity String       @default("HIGH") // 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  isEnabled   Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model UserSubscription {
+  id                   String             @id @default(uuid())
+  userId               String
+  stripeCustomerId     String             @unique
+  stripeSubscriptionId String?            @unique
+  tier                 String             // 'STARTER' | 'PRO' | 'ENTERPRISE'
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd     DateTime
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
