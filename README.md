@@ -4,6 +4,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![AI Engine](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-violet.svg)](https://ai.google.dev/)
 [![Status](https://img.shields.io/badge/Status-Pitch%20Ready-cyan.svg)](#)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen.svg)](https://bengalbound.github.io/market-pulse/)
+
+> 🌐 **Live Interactive Prototype & Pitch Deck**: [https://bengalbound.github.io/market-pulse/](https://bengalbound.github.io/market-pulse/)  
+> *(Test the live pulse radar, interactive 30-day SVG charts, Gemini AI counter-campaign generator, and 10-slide investor deck directly in your browser without local setup!)*
 
 MarketPulse AI is an automated market research, price monitoring, and counter-campaign generation platform built for modern e-commerce sellers (Shopify, Amazon FBA, DTC). 
 

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarketPulse AI — Automated Market Intelligence & Counter-Campaign SaaS</title>
+  <meta name="description" content="Subscription-based market intelligence platform tracking competitor pricing, supplier discounts, review sentiment, and automated AI counter-campaign ad generation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="theme-dark">
+  <!-- Top Ambient Glow Elements -->
+  <div class="glow-orb orb-primary"></div>
+  <div class="glow-orb orb-secondary"></div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <div class="app-layout">
+    <!-- Main Top Navigation -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand-logo" id="brand-logo-btn">
+          <div class="logo-icon-pulse">
+            <span class="pulse-ring"></span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Market<span class="brand-accent">Pulse</span></span>
+            <span class="brand-badge">SaaS Intelligence</span>
+          </div>
+        </div>
+
+        <!-- Live Ticker Indicator -->
+        <div class="live-market-badge" id="live-indicator">
+          <span class="status-dot pulsing"></span>
+          <span class="ticker-label">REAL-TIME RADAR:</span>
+          <span class="ticker-text" id="header-ticker-text">SoundWave slashed price by 17.5% • GaN chips -28%</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- AI Engine Status Indicator -->
+        <div class="ai-status-pill" id="ai-engine-status">
+          <span class="ai-chip-icon">⚡</span>
+          <span id="ai-mode-label">Gemini AI Engine Active</span>
+        </div>
+
+        <!-- Mode Switches -->
+        <button class="btn btn-pitch" id="btn-pitch-mode" title="Launch 10-Slide Investor Pitch Presentation">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <span>Investor Pitch Mode</span>
+          <span class="keyboard-hint">Deck</span>
+        </button>
+
+        <button class="btn btn-outline" id="btn-dispatch-test">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span>Simulate Alert</span>
+        </button>
+
+        <!-- User Profile Avatar -->
+        <div class="user-pill">
+          <div class="user-avatar">AP</div>
+          <div class="user-info">
+            <span class="user-name">Al Azizi Pro</span>
+            <span class="user-plan">Growth Tier</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs Bar -->
+    <nav class="sub-nav">
+      <div class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="tab-pulse" id="tab-btn-pulse" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Market Pulse
+        </button>
+        <button class="nav-tab" data-tab="tab-pricing" id="tab-btn-pricing" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Competitor Pricing
+          <span class="tab-badge alert-badge">3 Drops</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-reviews" id="tab-btn-reviews" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Competitor Reviews
+          <span class="tab-badge">14 Complaints</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-suppliers" id="tab-btn-suppliers" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          Supplier Discounts
+          <span class="tab-badge profit-badge">+34% Margin</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-ai-generator" id="tab-btn-ai" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          AI Ad Prompts & Counter-Campaigns
+          <span class="tab-badge ai-badge">Live AI</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-tiers" id="tab-btn-tiers" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          SaaS Tiers & Roadmap
+        </button>
+      </div>
+
+      <div class="workspace-selector">
+        <span class="ws-label">Store:</span>
+        <select class="ws-dropdown" id="workspace-switch">
+          <option value="electronics">AuraSound Official (Shopify)</option>
+          <option value="amazon">AuraSound US (Amazon FBA)</option>
+          <option value="tiktok">AuraSound Creator Shop (TikTok)</option>
+        </select>
+      </div>
+    </nav>
+
+    <!-- Main Dynamic Content Views -->
+    <main class="main-content" id="main-content-area">
+
+      <!-- TAB 1: MARKET PULSE OVERVIEW -->
+      <section class="tab-pane active" id="tab-pulse">
+        <!-- Hero Metrics Row -->
+        <div class="metrics-grid">
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Tracked Competitors</span>
+              <span class="metric-icon-wrap cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+            </div>
+            <div class="metric-value" id="stat-competitors">8 Brands</div>
+            <div class="metric-subtext">24 Target SKUs monitored 24/7</div>
+          </div>
+
+          <div class="metric-card glass-panel alert-glow">
+            <div class="metric-header">
+              <span class="metric-title">Critical Price Alerts</span>
+              <span class="metric-icon-wrap red">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-red" id="stat-alerts">3 Drops (>15%)</div>
+            <div class="metric-subtext">Automated counter-prompts queued</div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Supplier Arbitrage</span>
+              <span class="metric-icon-wrap green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-green" id="stat-arbitrage">+18.4% Margin</div>
+            <div class="metric-subtext">5 Wholesale discount spikes detected</div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Competitor Weaknesses</span>
+              <span class="metric-icon-wrap violet">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-violet" id="stat-weaknesses">14 Complaints</div>
+            <div class="metric-subtext">Quality & shipping delay backlash</div>
+          </div>
+        </div>
+
+        <!-- Pulse Two-Column Action Layout -->
+        <div class="dashboard-grid-2col">
+          <!-- Left: Real-Time Radar Feed -->
+          <div class="glass-panel feed-panel">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">Real-Time Market Shift Radar</h2>
+                <p class="panel-subtitle">Immediate events triggering automated actions</p>
+              </div>
+              <button class="btn btn-sm btn-ghost" id="btn-refresh-pulse">Refresh</button>
+            </div>
+
+            <div class="event-feed-list" id="pulse-events-list">
+              <!-- Dynamically populated events -->
+            </div>
+          </div>
+
+          <!-- Right: Strategic Action Center -->
+          <div class="glass-panel action-panel">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">Quick Counter-Strike</h2>
+                <p class="panel-subtitle">Instant 1-Click AI Response</p>
+              </div>
+              <span class="ai-spark-tag">Instant LLM</span>
+            </div>
+
+            <div class="fast-action-card">
+              <div class="fast-action-headline">
+                <span class="severity-pill red">ALERT DETECTED</span>
+                <span class="action-time">2h ago</span>
+              </div>
+              <h3 class="action-item-name">SoundWave slashed ApexPro by -17.5% ($122.90)</h3>
+              <p class="action-item-desc">
+                Their customer reviews reveal <strong>14 complaints about broken ear cup foam & zero human support</strong>.
+                Launch a targeted Meta counter-campaign touting your 3-year warranty and free replacement guarantee.
+              </p>
+              <div class="action-buttons-group">
+                <button class="btn btn-primary" id="btn-quick-counter">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Generate Counter-Campaign Copy
+                </button>
+                <button class="btn btn-secondary" id="btn-view-chart-jump">
+                  Inspect Price History
+                </button>
+              </div>
+            </div>
+
+            <!-- Supplier Quick Opportunity -->
+            <div class="fast-action-card mt-md">
+              <div class="fast-action-headline">
+                <span class="severity-pill green">SUPPLIER ARBITRAGE</span>
+                <span class="action-time">Expires in 48h</span>
+              </div>
+              <h3 class="action-item-name">Shenzhen TechLink: 28% off GaN Power ICs</h3>
+              <p class="action-item-desc">
+                Bulk lot available. Lowers unit production cost from $14.20 to $10.22, expanding gross margin by +16.0%.
+              </p>
+              <button class="btn btn-outline btn-sm" id="btn-supplier-quick-view">
+                Review Wholesale Campaign
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: COMPETITOR PRICING & HISTORICAL LOGS -->
+      <section class="tab-pane" id="tab-pricing">
+        <div class="section-heading-row">
+          <div>
+            <h1 class="page-title">Competitor Pricing Radar</h1>
+            <p class="page-description">Time-series tracking of competitor pricing shifts, margin comparisons, and drop threshold alerts.</p>
+          </div>
+          <div class="filter-controls">
+            <span class="filter-label">Threshold Alert:</span>
+            <select class="dropdown-filter" id="pricing-threshold-filter">
+              <option value="10">Alert on > 10% Shift</option>
+              <option value="15" selected>Alert on > 15% Shift</option>
+              <option value="20">Alert on > 20% Shift</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Selector Cards -->
+        <div class="product-selector-row" id="product-chips-container">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Interactive Chart & Margin Analysis Grid -->
+        <div class="pricing-detail-grid">
+          <!-- Chart Card -->
+          <div class="glass-panel chart-panel">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title" id="active-product-chart-title">ApexPro ANC Headphones vs AuraSound Pro</h3>
+                <span class="chart-subtitle" id="active-product-chart-sub">30-Day Daily Price Trend (TimescaleDB Historical Series)</span>
+              </div>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="legend-color competitor-color"></span> Competitor (SoundWave)</span>
+                <span class="legend-item"><span class="legend-color baseline-color"></span> Your Baseline (AuraSound)</span>
+              </div>
+            </div>
+
+            <!-- Custom SVG Interactive Chart Container -->
+            <div class="svg-chart-container" id="price-history-chart-wrapper">
+              <svg id="price-svg-chart" viewBox="0 0 760 300" preserveAspectRatio="none"></svg>
+              <div id="chart-tooltip" class="chart-tooltip"></div>
+            </div>
+
+            <div class="chart-footer-stats" id="chart-summary-stats">
+              <!-- Dynamically populated stats -->
+            </div>
+          </div>
+
+          <!-- Product Strategy & Diff Card -->
+          <div class="glass-panel strategy-panel">
+            <h3 class="panel-title">Price Diff & Margin Analysis</h3>
+            <div id="active-product-diff-body">
+              <!-- Dynamically populated diff -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: COMPETITOR REVIEWS & WEAKNESS RADAR -->
+      <section class="tab-pane" id="tab-reviews">
+        <div class="section-heading-row">
+          <div>
+            <h1 class="page-title">Competitor Review & Weakness Radar</h1>
+            <p class="page-description">Automated ingestion of Google & Amazon reviews. Spot recurring complaints and exploit product weaknesses.</p>
+          </div>
+          <div class="sentiment-indicator-badge">
+            <span class="pulse-indicator red-glow"></span>
+            <span>Negative Review Velocity Surge: +38%</span>
+          </div>
+        </div>
+
+        <!-- Reviews Analytics Bar -->
+        <div class="reviews-stats-banner glass-panel">
+          <div class="rev-stat-item">
+            <span class="rev-stat-label">Competitor Avg Star Rating</span>
+            <span class="rev-stat-val text-yellow" id="rev-stat-rating">2.4 / 5.0 ★</span>
+          </div>
+          <div class="rev-stat-item">
+            <span class="rev-stat-label">Total Verified Reviews Pulled</span>
+            <span class="rev-stat-val" id="rev-stat-total">148 Reviews</span>
+          </div>
+          <div class="rev-stat-item">
+            <span class="rev-stat-label">Critical Complaints Extracted</span>
+            <span class="rev-stat-val text-red" id="rev-stat-critical">14 Complaints</span>
+          </div>
+          <div class="rev-stat-item">
+            <span class="rev-stat-label">Fastest Growing Discontent</span>
+            <span class="rev-stat-val text-cyan">"Ghost Support" & "Crackle"</span>
+          </div>
+        </div>
+
+        <!-- Recurring Pain Points Tag Cloud -->
+        <div class="pain-points-card glass-panel">
+          <div class="card-inner-header">
+            <h3 class="inner-title">Top Extracted Pain Points (Exploitable Angles for Ad Copy)</h3>
+            <span class="sub-pill">Click a pain point to generate ad angle</span>
+          </div>
+          <div class="pain-point-tags" id="pain-points-tag-list">
+            <!-- Dynamically populated tags -->
+          </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div class="glass-panel reviews-feed-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">Recent Competitor Reviews (Google Places API & Scraper)</h3>
+            <span class="feed-count-badge" id="reviews-count-badge">5 High-Impact Reviews</span>
+          </div>
+          <div class="reviews-list-container" id="reviews-list-wrapper">
+            <!-- Dynamically populated reviews -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: SUPPLIER WHOLESALE DISCOUNTS -->
+      <section class="tab-pane" id="tab-suppliers">
+        <div class="section-heading-row">
+          <div>
+            <h1 class="page-title">Supplier Discount & Wholesale Arbitrage</h1>
+            <p class="page-description">Automated monitoring of supplier portals and component wholesale catalogs to optimize COGS.</p>
+          </div>
+          <span class="profit-highlight-badge">Up to +21% Profit Margin Expansion</span>
+        </div>
+
+        <div class="suppliers-grid" id="suppliers-card-container">
+          <!-- Dynamically populated supplier discount cards -->
+        </div>
+      </section>
+
+      <!-- TAB 5: AI AD PROMPT & COUNTER-CAMPAIGN GENERATOR -->
+      <section class="tab-pane" id="tab-ai-generator">
+        <div class="section-heading-row">
+          <div>
+            <h1 class="page-title">AI Counter-Campaign Generator</h1>
+            <p class="page-description">Synthesize competitor price drops, stock shortages, and bad reviews into aggressive, high-converting ad copy.</p>
+          </div>
+          <div class="ai-mode-tag" id="ai-engine-tag">
+            <span class="sparkle-icon">✨</span>
+            <span>Gemini 1.5 Flash Output Engine</span>
+          </div>
+        </div>
+
+        <div class="ai-workbench-grid">
+          <!-- Left: Campaign Trigger Configuration -->
+          <div class="glass-panel ai-config-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Campaign Triggers</h3>
+              <span class="trigger-badge">Live Context</span>
+            </div>
+
+            <form id="ai-prompt-form" class="ai-form">
+              <div class="form-group">
+                <label for="ai-competitor-select" class="form-label">Competitor Target</label>
+                <select id="ai-competitor-select" class="form-input">
+                  <option value="SoundWave Global">SoundWave Global (ApexPro ANC)</option>
+                  <option value="KeyCraft Labs">KeyCraft Labs (UltraGlow Keyboard)</option>
+                  <option value="PowerPulse Gear">PowerPulse Gear (100W GaN Hub)</option>
+                  <option value="ThermoPure Lifestyle">ThermoPure Lifestyle (Smart Tumbler)</option>
+                </select>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="ai-drop-percent" class="form-label">Price Cut (%)</label>
+                  <input type="number" id="ai-drop-percent" class="form-input" value="17.5" step="0.5">
+                </div>
+                <div class="form-group">
+                  <label for="ai-target-platform" class="form-label">Target Platform</label>
+                  <select id="ai-target-platform" class="form-input">
+                    <option value="Meta Ads (Instagram & Facebook Carousel)">Meta Ads (Instagram & Facebook)</option>
+                    <option value="Google Search & Performance Max">Google Ads (Search & PMax)</option>
+                    <option value="TikTok Viral Hook Video">TikTok Video Ad Script</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="ai-top-complaint" class="form-label">Competitor Review Weakness to Exploit</label>
+                <textarea id="ai-top-complaint" class="form-textarea" rows="3">Left ear cup crackles; unresponsive support refusing warranty replacements</textarea>
+                <span class="input-hint">Feed customer complaints into Gemini to craft high-converting counter-hooks.</span>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block" id="btn-run-ai">
+                <span class="ai-btn-text">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Generate Counter-Campaign Now
+                </span>
+                <span class="ai-btn-loader" style="display: none;">Generating Assets...</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Generated Ad Assets Output Feed -->
+          <div class="glass-panel ai-results-panel">
+            <div class="panel-header">
+              <div class="flex-align-center">
+                <h3 class="panel-title">Generated Ad Assets</h3>
+                <span class="status-pill green" id="ai-result-mode-pill">Ready</span>
+              </div>
+              <div class="action-btn-row">
+                <button class="btn btn-sm btn-outline" id="btn-copy-all-ad" title="Copy entire ad package">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy All
+                </button>
+                <button class="btn btn-sm btn-ghost" id="btn-export-ad-json" title="Download JSON">Export JSON</button>
+              </div>
+            </div>
+
+            <div class="ai-output-feed" id="ai-output-container">
+              <!-- Dynamically populated generated campaign -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: SAAS TIERS & ARCHITECTURE ROADMAP -->
+      <section class="tab-pane" id="tab-tiers">
+        <div class="section-heading-row text-center-wrap">
+          <div>
+            <h1 class="page-title text-center">SaaS Subscription Model & Unit Economics</h1>
+            <p class="page-description text-center">Engineered for e-commerce brands scaling from solo sellers to 8-figure aggregators.</p>
+          </div>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="tiers-pricing-grid" id="tiers-cards-wrapper">
+          <!-- Dynamically populated pricing tiers -->
+        </div>
+
+        <!-- Technical Architecture Overview (For Pitch / Technical Review) -->
+        <div class="glass-panel mt-xl">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Technical Architecture & Scaling Blueprint</h2>
+              <p class="panel-subtitle">Ready-to-deploy modular microservices stack</p>
+            </div>
+            <span class="architecture-badge">Production Blueprint</span>
+          </div>
+
+          <div class="tech-stack-row">
+            <div class="tech-pill">
+              <span class="tech-name">PostgreSQL + TimescaleDB</span>
+              <span class="tech-desc">Time-series price history hypertable</span>
+            </div>
+            <div class="tech-pill">
+              <span class="tech-name">Redis + BullMQ</span>
+              <span class="tech-desc">Rate-limited distributed scrape queues</span>
+            </div>
+            <div class="tech-pill">
+              <span class="tech-name">Gemini 1.5 Flash API</span>
+              <span class="tech-desc">Direct-response ad copy generation</span>
+            </div>
+            <div class="tech-pill">
+              <span class="tech-name">Multi-Channel Alerts</span>
+              <span class="tech-desc">SendGrid, Twilio SMS & Webhook dispatch</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FULLSCREEN INVESTOR PITCH DECK OVERLAY -->
+    <div class="pitch-modal-overlay" id="pitch-modal" style="display: none;">
+      <div class="pitch-container">
+        <!-- Pitch Deck Header -->
+        <div class="pitch-header">
+          <div class="pitch-header-left">
+            <span class="pitch-brand">MarketPulse AI</span>
+            <span class="pitch-separator">•</span>
+            <span class="pitch-slide-title" id="pitch-current-title">1. Executive Overview</span>
+          </div>
+          <div class="pitch-header-right">
+            <span class="pitch-counter" id="pitch-counter-display">Slide 1 of 10</span>
+            <button class="btn btn-sm btn-ghost" id="pitch-speaker-notes-toggle" title="Toggle Presenter Notes">
+              Notes
+            </button>
+            <button class="btn btn-sm btn-icon" id="pitch-close-btn" title="Exit Pitch Mode (Esc)">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Slide Content Display -->
+        <div class="pitch-slide-stage" id="pitch-slide-stage">
+          <!-- Slide content injected dynamically -->
+        </div>
+
+        <!-- Speaker Notes Drawer -->
+        <div class="pitch-speaker-notes" id="pitch-speaker-notes" style="display: none;">
+          <div class="notes-header">
+            <strong>PRESENTER NOTES / TALKING POINTS:</strong>
+          </div>
+          <div class="notes-body" id="pitch-notes-text">
+            Opening slide notes...
+          </div>
+        </div>
+
+        <!-- Pitch Deck Footer / Navigation -->
+        <div class="pitch-footer">
+          <div class="pitch-nav-dots" id="pitch-nav-dots">
+            <!-- Slide dots generated dynamically -->
+          </div>
+          <div class="pitch-nav-buttons">
+            <button class="btn btn-secondary btn-sm" id="pitch-prev-btn">← Previous</button>
+            <button class="btn btn-primary btn-sm" id="pitch-next-btn">Next Slide →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Dispatch Simulation Modal -->
+    <div class="modal-backdrop" id="alert-modal" style="display: none;">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title">Live Alert Dispatcher Test</h3>
+          <button class="btn-icon" id="alert-modal-close">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">Simulate an immediate price drop trigger dispatched across user notification channels:</p>
+          <div class="alert-sim-form">
+            <label class="form-label">Alert Target</label>
+            <input type="text" class="form-input" id="sim-alert-product" value="SoundWave ApexPro ANC (-17.5% Drop)">
+
+            <label class="form-label mt-sm">Notification Channels</label>
+            <div class="checkbox-row">
+              <label><input type="checkbox" checked id="sim-chk-email"> Email (SendGrid)</label>
+              <label><input type="checkbox" checked id="sim-chk-sms"> SMS (Twilio)</label>
+              <label><input type="checkbox" checked id="sim-chk-webhook"> Webhook</label>
+            </div>
+          </div>
+          <div class="dispatch-results-log" id="dispatch-results-log" style="display: none;">
+            <!-- Live status logs injected here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="alert-modal-cancel">Cancel</button>
+          <button class="btn btn-primary" id="btn-execute-dispatch">Dispatch Alert Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/charts.js"></script>
+  <script src="js/pitchDeck.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

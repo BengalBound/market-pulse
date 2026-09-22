@@ -1,0 +1,360 @@
+{
+  "marketPulse": {
+    "summary": "High market volatility detected in Consumer Electronics & Workspace Accessories. 3 competitors triggered critical price cut alerts, while Supplier discounts present up to a 34% margin improvement opportunity.",
+    "stats": {
+      "trackedCompetitors": 8,
+      "monitoredProducts": 24,
+      "activePriceAlerts": 4,
+      "criticalReviewSpikes": 3,
+      "supplierDealsActive": 5,
+      "potentialProfitBoost": "+18.4%"
+    },
+    "recentEvents": [
+      {
+        "id": "evt-101",
+        "type": "PRICE_DROP",
+        "severity": "high",
+        "competitor": "SoundWave Global",
+        "product": "ApexPro Wireless ANC Headphones",
+        "detail": "Price slashed by 17.5% ($149.00 -> $122.90)",
+        "timestamp": "2 hours ago",
+        "actionRecommended": "Trigger Counter-Campaign highlighting premium build & faster delivery"
+      },
+      {
+        "id": "evt-102",
+        "type": "REVIEW_WEAKNESS",
+        "severity": "critical",
+        "competitor": "KeyCraft Labs",
+        "product": "UltraGlow RGB Mechanical Keyboard",
+        "detail": "Google Reviews negative spike (1.8/5 avg this week): 14 complaints citing broken stabilizer switches & ghosting.",
+        "timestamp": "3 hours ago",
+        "actionRecommended": "Run comparison ad emphasizing our 3-year warranty and hot-swap Lubed switches"
+      },
+      {
+        "id": "evt-103",
+        "type": "SUPPLIER_DISCOUNT",
+        "severity": "medium",
+        "supplier": "Shenzhen TechLink Hub",
+        "product": "100W GaN Fast-Charging Controllers",
+        "detail": "Flash wholesale discount of 28% for orders above 300 units (valid 48h)",
+        "timestamp": "5 hours ago",
+        "actionRecommended": "Restock inventory to reduce unit COGS from $14.20 to $10.22"
+      },
+      {
+        "id": "evt-104",
+        "type": "PRICE_SPIKE",
+        "severity": "low",
+        "competitor": "VeloceGear",
+        "product": "NovaStream 4K Capture Card",
+        "detail": "Competitor raised price by 12% ($179.99 -> $201.50) due to component shortage.",
+        "timestamp": "8 hours ago",
+        "actionRecommended": "Capture market share by holding steady at $169.00 with 'Price Freeze' badge"
+      }
+    ]
+  },
+  "trackedProducts": [
+    {
+      "id": "prod-1",
+      "name": "ApexPro Wireless ANC Headphones",
+      "category": "Audio & Electronics",
+      "myProduct": {
+        "title": "AuraSound Pro Active Noise Cancelling",
+        "currentPrice": 139.00,
+        "cogs": 48.00,
+        "currentMargin": "65.5%"
+      },
+      "competitor": {
+        "brand": "SoundWave Global",
+        "marketplace": "Amazon & Direct",
+        "currentPrice": 122.90,
+        "previousPrice": 149.00,
+        "priceChangePercent": -17.5,
+        "stockStatus": "In Stock",
+        "lastChecked": "Today, 15:40 UTC"
+      },
+      "history": [
+        { "day": "Day 1", "price": 149.99 },
+        { "day": "Day 5", "price": 149.99 },
+        { "day": "Day 10", "price": 149.00 },
+        { "day": "Day 15", "price": 145.00 },
+        { "day": "Day 20", "price": 145.00 },
+        { "day": "Day 25", "price": 139.90 },
+        { "day": "Day 28", "price": 139.90 },
+        { "day": "Day 29", "price": 129.00 },
+        { "day": "Day 30", "price": 122.90 }
+      ],
+      "topComplaint": "Severe Bluetooth stuttering and ear cup foam cracking within 3 months.",
+      "suggestedAngle": "Superior acoustic seal and durable Italian protein leather."
+    },
+    {
+      "id": "prod-2",
+      "name": "UltraGlow RGB Mechanical Keyboard",
+      "category": "Gaming & Peripherals",
+      "myProduct": {
+        "title": "ZenType Pro Custom Hot-Swap Keyboard",
+        "currentPrice": 109.00,
+        "cogs": 38.50,
+        "currentMargin": "64.7%"
+      },
+      "competitor": {
+        "brand": "KeyCraft Labs",
+        "marketplace": "Shopify / Direct",
+        "currentPrice": 95.00,
+        "previousPrice": 115.00,
+        "priceChangePercent": -17.4,
+        "stockStatus": "Low Stock (12 left)",
+        "lastChecked": "Today, 14:15 UTC"
+      },
+      "history": [
+        { "day": "Day 1", "price": 119.00 },
+        { "day": "Day 5", "price": 115.00 },
+        { "day": "Day 10", "price": 115.00 },
+        { "day": "Day 15", "price": 115.00 },
+        { "day": "Day 20", "price": 109.00 },
+        { "day": "Day 25", "price": 105.00 },
+        { "day": "Day 28", "price": 99.00 },
+        { "day": "Day 29", "price": 99.00 },
+        { "day": "Day 30", "price": 95.00 }
+      ],
+      "topComplaint": "Sticky spacebars and unresponsive customer support when asking for RMA replacements.",
+      "suggestedAngle": "Pre-lubed Gateron switches with 48-hour no-questions-asked replacement guarantee."
+    },
+    {
+      "id": "prod-3",
+      "name": "HyperCharge 100W GaN Travel Hub",
+      "category": "Charging & Accessories",
+      "myProduct": {
+        "title": "VoltFlex 100W Ultra-Slim GaN Charger",
+        "currentPrice": 59.99,
+        "cogs": 17.50,
+        "currentMargin": "70.8%"
+      },
+      "competitor": {
+        "brand": "PowerPulse Gear",
+        "marketplace": "Amazon US",
+        "currentPrice": 44.99,
+        "previousPrice": 59.99,
+        "priceChangePercent": -25.0,
+        "stockStatus": "In Stock",
+        "lastChecked": "Today, 12:30 UTC"
+      },
+      "history": [
+        { "day": "Day 1", "price": 64.99 },
+        { "day": "Day 5", "price": 59.99 },
+        { "day": "Day 10", "price": 59.99 },
+        { "day": "Day 15", "price": 54.99 },
+        { "day": "Day 20", "price": 54.99 },
+        { "day": "Day 25", "price": 49.99 },
+        { "day": "Day 28", "price": 49.99 },
+        { "day": "Day 29", "price": 45.99 },
+        { "day": "Day 30", "price": 44.99 }
+      ],
+      "topComplaint": "Runs extremely hot to the touch and drops charging speed during multi-device load.",
+      "suggestedAngle": "Aerospace thermal dissipation graphene pads that maintain 65W+ sustained laptop fast charge without thermal throttling."
+    },
+    {
+      "id": "prod-4",
+      "name": "AquaHydrate Smart Vacuum Tumbler",
+      "category": "Lifestyle & Fitness",
+      "myProduct": {
+        "title": "HydroVibe Insulated 32oz Tumbler",
+        "currentPrice": 42.00,
+        "cogs": 11.20,
+        "currentMargin": "73.3%"
+      },
+      "competitor": {
+        "brand": "ThermoPure Lifestyle",
+        "marketplace": "TikTok Shop",
+        "currentPrice": 38.00,
+        "previousPrice": 45.00,
+        "priceChangePercent": -15.5,
+        "stockStatus": "In Stock",
+        "lastChecked": "Today, 11:10 UTC"
+      },
+      "history": [
+        { "day": "Day 1", "price": 45.00 },
+        { "day": "Day 5", "price": 45.00 },
+        { "day": "Day 10", "price": 45.00 },
+        { "day": "Day 15", "price": 42.00 },
+        { "day": "Day 20", "price": 42.00 },
+        { "day": "Day 25", "price": 40.00 },
+        { "day": "Day 28", "price": 39.00 },
+        { "day": "Day 29", "price": 38.00 },
+        { "day": "Day 30", "price": 38.00 }
+      ],
+      "topComplaint": "Lid seal leaks in backpack; paint chips off after 2 dishwasher runs.",
+      "suggestedAngle": "Double-threaded leakproof locking lid with powder-coated scratch-resistant aerospace finish."
+    }
+  ],
+  "supplierDiscounts": [
+    {
+      "id": "sup-1",
+      "supplierName": "Shenzhen TechLink Component Hub",
+      "category": "Semiconductors & Charging",
+      "component": "Navitas GaN Power ICs (100W)",
+      "discountPercent": 28,
+      "moq": 300,
+      "unitPrice": 8.40,
+      "regularPrice": 11.70,
+      "validUntil": "In 3 Days",
+      "verified": true,
+      "marginImpact": "+16% Profit Margin"
+    },
+    {
+      "id": "sup-2",
+      "supplierName": "AudioLabs Acoustic Technologies",
+      "category": "Audio Components",
+      "component": "40mm Beryllium Driver Diaphragms",
+      "discountPercent": 22,
+      "moq": 150,
+      "unitPrice": 14.50,
+      "regularPrice": 18.60,
+      "validUntil": "In 5 Days",
+      "verified": true,
+      "marginImpact": "+12% Profit Margin"
+    },
+    {
+      "id": "sup-3",
+      "supplierName": "Precision Silicon & Plastics",
+      "category": "Keyboards & Switches",
+      "component": "Double-Shot PBT Keycap Sets (ISO/ANSI)",
+      "discountPercent": 35,
+      "moq": 200,
+      "unitPrice": 9.20,
+      "regularPrice": 14.15,
+      "validUntil": "In 24 Hours",
+      "verified": true,
+      "marginImpact": "+21% Profit Margin"
+    },
+    {
+      "id": "sup-4",
+      "supplierName": "Dongguan EcoThermal Packaging",
+      "category": "Packaging & Fulfillment",
+      "component": "FSC-Certified Magnetic Gift Boxes",
+      "discountPercent": 18,
+      "moq": 500,
+      "unitPrice": 1.65,
+      "regularPrice": 2.05,
+      "validUntil": "In 7 Days",
+      "verified": true,
+      "marginImpact": "+6% Net Margin"
+    }
+  ],
+  "competitorReviews": [
+    {
+      "id": "rev-1",
+      "competitor": "SoundWave Global",
+      "product": "ApexPro Wireless ANC Headphones",
+      "platform": "Google Reviews",
+      "rating": 1,
+      "author": "Marcus K., Verified Buyer",
+      "date": "Yesterday",
+      "reviewText": "Do not buy! The left ear cup started crackling and dropping connection after 3 weeks. Contacted their support 4 times and got zero human response, just automated bots.",
+      "sentiment": "Critical Negative",
+      "extractedPainPoints": ["Hardware crackle", "Connection drops", "Ghost support / No human reply"],
+      "actionableHook": "Frustrated by robotic support and dying headphones? AuraSound gives you 24/7 human VIP care."
+    },
+    {
+      "id": "rev-2",
+      "competitor": "KeyCraft Labs",
+      "product": "UltraGlow RGB Mechanical Keyboard",
+      "platform": "Google Reviews",
+      "rating": 2,
+      "author": "Elena R., Content Creator",
+      "date": "2 days ago",
+      "reviewText": "Took 18 days to arrive even with express shipping. When it got here the spacebar squeaks loud enough to pick up on my stream mic. Super disappointed for $95.",
+      "sentiment": "Critical Negative",
+      "extractedPainPoints": ["Slow 18-day shipping", "Squeaking rattle stabilizer", "Streamer noise problem"],
+      "actionableHook": "Tired of squeaky budget stabilizers ruining your stream? ZenType ships in 48h with factory-lubed silence."
+    },
+    {
+      "id": "rev-3",
+      "competitor": "PowerPulse Gear",
+      "product": "HyperCharge 100W GaN Travel Hub",
+      "platform": "Google Reviews",
+      "rating": 1,
+      "author": "David W., Remote Nomad",
+      "date": "3 days ago",
+      "reviewText": "Plugged in my MacBook and iPad at the airport and this charger became scalding hot. It actually throttled down to a trickle charge. Definitely not travel safe.",
+      "sentiment": "Critical Negative",
+      "extractedPainPoints": ["Overheating danger", "Charge speed throttling", "Not travel safe"],
+      "actionableHook": "Never settle for dangerous overheated bricks. VoltFlex uses Aerospace graphene cooling that never throttles."
+    },
+    {
+      "id": "rev-4",
+      "competitor": "ThermoPure Lifestyle",
+      "product": "AquaHydrate Smart Vacuum Tumbler",
+      "platform": "Google Reviews",
+      "rating": 2,
+      "author": "Jessica M., College Athlete",
+      "date": "4 days ago",
+      "reviewText": "Leaked cold brew all over my laptop in my gym bag! The lid threading is poorly molded. Also, customer service refused a return because it was opened.",
+      "sentiment": "Critical Negative",
+      "extractedPainPoints": ["Severe lid leak", "Ruined electronics", "Refused return policy"],
+      "actionableHook": "100% Guaranteed Leak-Proof or we replace it free. The HydroVibe double-threaded locking seal will never spill."
+    },
+    {
+      "id": "rev-5",
+      "competitor": "SoundWave Global",
+      "product": "ApexPro Wireless ANC Headphones",
+      "platform": "Google Reviews",
+      "rating": 2,
+      "author": "Samir B.",
+      "date": "5 days ago",
+      "reviewText": "They dropped the price by $25 right after I bought it, but wouldn't honor a price adjustment. Sneaky business model.",
+      "sentiment": "Negative",
+      "extractedPainPoints": ["Dishonest price changes", "Refused price match guarantee"],
+      "actionableHook": "Transparent pricing with a 30-day Price Match & Happiness Guarantee."
+    }
+  ],
+  "subscriptionTiers": [
+    {
+      "id": "tier-starter",
+      "name": "Starter Seller",
+      "price": "$49",
+      "interval": "/month",
+      "targetAudience": "Solo e-commerce sellers & boutique Shopify stores",
+      "features": [
+        "Track up to 10 Competitor Products",
+        "Daily Price & Stock Crawling",
+        "Weekly Google Review Sentiment Digest",
+        "30 AI Ad Prompts per Month",
+        "Email & In-App Alerts"
+      ],
+      "popular": false
+    },
+    {
+      "id": "tier-pro",
+      "name": "Growth Merchant",
+      "price": "$199",
+      "interval": "/month",
+      "targetAudience": "Scaling brands doing $30k–$250k/mo across Amazon & DTC",
+      "features": [
+        "Track up to 100 Competitor Products",
+        "Hourly Real-Time Price Drop Alerts",
+        "Continuous Google Reviews & Negative Complaint Ingestion",
+        "Supplier Wholesale Discount Radar",
+        "Unlimited Live AI Counter-Campaign Generations",
+        "Instant SMS, Slack & Webhook Dispatch",
+        "Dedicated Multi-Tenant Workspaces"
+      ],
+      "popular": true
+    },
+    {
+      "id": "tier-enterprise",
+      "name": "Enterprise Brand",
+      "price": "$499",
+      "interval": "/month",
+      "targetAudience": "Multi-brand aggregators & high-volume e-commerce agencies",
+      "features": [
+        "Unlimited Competitor & Supplier Tracking",
+        "Sub-15 Minute Scrape Frequency with Residential Proxies",
+        "Custom Scraper Adapters for Private Wholesale Portals",
+        "Automated Meta/TikTok Ad Launcher via API",
+        "Dedicated Account Strategist & SLA Support",
+        "Raw TimescaleDB Historical Export Access"
+      ],
+      "popular": false
+    }
+  ]
+}
