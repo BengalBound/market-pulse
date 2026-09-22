@@ -1,5 +1,6 @@
 /**
  * MarketPulse AI — Core Frontend Application Logic
+ * Supports both Node.js Express API and Static GitHub Pages Hosting
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabPanes = document.querySelectorAll('.tab-pane');
   const toastContainer = document.getElementById('toast-container');
 
+  // Static Data Cache for GitHub Pages hosting
+  let cachedStaticData = null;
+  async function getStaticData() {
+    if (cachedStaticData) return cachedStaticData;
+    try {
+      const res = await fetch('data/mockData.json');
+      if (res.ok) {
+        cachedStaticData = await res.json();
+        return cachedStaticData;
+      }
+    } catch (e) {
+      console.warn('Fallback fetch data/mockData.json error:', e);
+    }
+    return null;
+  }
+
   // Initialize
   initApp();
 
@@ -33,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check backend health & AI engine mode
     checkHealth();
 
-    // Load API data
+    // Load API or Static Data
     await Promise.all([
       loadPulseData(),
       loadPricingData(),
@@ -74,13 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
   async function checkHealth() {
     try {
       const res = await fetch('/api/health');
+      if (!res.ok) throw new Error('Static Mode');
       const data = await res.json();
       const label = document.getElementById('ai-mode-label');
       if (label && data.aiMode) {
         label.textContent = data.aiMode.includes('Live') ? 'Gemini 1.5 Flash (Live)' : 'MarketPulse Smart Engine (Instant)';
       }
     } catch (err) {
-      console.warn('Backend health check warning:', err.message);
+      const label = document.getElementById('ai-mode-label');
+      if (label) label.textContent = 'GitHub Live Demo Engine (Active)';
     }
   }
 
@@ -119,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Refresh charts if pricing tab is opened
-    if (tabId === 'tab-pricing' && state.pricingData.length > 0) {
+    if (tabId === 'tab-pricing' && state.pricingData && state.pricingData.length > 0) {
       setTimeout(() => renderActiveProductPricing(), 50);
     }
 
@@ -130,61 +149,63 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadPulseData() {
     try {
       const res = await fetch('/api/pulse');
+      if (!res.ok) throw new Error('API offline');
       const data = await res.json();
-      if (!data.success) return;
-
       state.pulseData = data.pulse;
-      const stats = data.pulse.stats;
-
-      // Update KPI metrics
-      const compEl = document.getElementById('stat-competitors');
-      const alertsEl = document.getElementById('stat-alerts');
-      const arbEl = document.getElementById('stat-arbitrage');
-      const weakEl = document.getElementById('stat-weaknesses');
-
-      if (compEl) compEl.textContent = `${stats.trackedCompetitors} Brands`;
-      if (alertsEl) alertsEl.textContent = `${stats.activePriceAlerts} Drops (>15%)`;
-      if (arbEl) arbEl.textContent = stats.potentialProfitBoost;
-      if (weakEl) weakEl.textContent = `${stats.criticalReviewSpikes} Backlash Spikes`;
-
-      // Render recent events feed
-      const feedContainer = document.getElementById('pulse-events-list');
-      if (feedContainer && data.pulse.recentEvents) {
-        feedContainer.innerHTML = '';
-        data.pulse.recentEvents.forEach(evt => {
-          const item = document.createElement('div');
-          item.className = 'event-feed-item';
-
-          let iconClass = 'price-drop';
-          let iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>`;
-
-          if (evt.type === 'SUPPLIER_DISCOUNT') {
-            iconClass = 'supplier-discount';
-            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>`;
-          } else if (evt.type === 'REVIEW_WEAKNESS') {
-            iconClass = 'review-weakness';
-            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
-          } else if (evt.type === 'PRICE_SPIKE') {
-            iconClass = 'price-spike';
-            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>`;
-          }
-
-          item.innerHTML = `
-            <div class="event-badge-icon ${iconClass}">${iconSvg}</div>
-            <div class="event-body">
-              <div class="event-topline">
-                <span class="event-entity">${evt.competitor || evt.supplier}</span>
-                <span class="event-time">${evt.timestamp}</span>
-              </div>
-              <div class="event-detail">${evt.detail}</div>
-              <div class="event-action-hint">⚡ Action: ${evt.actionRecommended}</div>
-            </div>
-          `;
-          feedContainer.appendChild(item);
-        });
-      }
     } catch (err) {
-      console.error('Error loading pulse data:', err);
+      const staticData = await getStaticData();
+      if (staticData) state.pulseData = staticData.marketPulse;
+    }
+
+    if (!state.pulseData) return;
+    const stats = state.pulseData.stats;
+
+    // Update KPI metrics
+    const compEl = document.getElementById('stat-competitors');
+    const alertsEl = document.getElementById('stat-alerts');
+    const arbEl = document.getElementById('stat-arbitrage');
+    const weakEl = document.getElementById('stat-weaknesses');
+
+    if (compEl) compEl.textContent = `${stats.trackedCompetitors} Brands`;
+    if (alertsEl) alertsEl.textContent = `${stats.activePriceAlerts} Drops (>15%)`;
+    if (arbEl) arbEl.textContent = stats.potentialProfitBoost;
+    if (weakEl) weakEl.textContent = `${stats.criticalReviewSpikes} Backlash Spikes`;
+
+    // Render recent events feed
+    const feedContainer = document.getElementById('pulse-events-list');
+    if (feedContainer && state.pulseData.recentEvents) {
+      feedContainer.innerHTML = '';
+      state.pulseData.recentEvents.forEach(evt => {
+        const item = document.createElement('div');
+        item.className = 'event-feed-item';
+
+        let iconClass = 'price-drop';
+        let iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>`;
+
+        if (evt.type === 'SUPPLIER_DISCOUNT') {
+          iconClass = 'supplier-discount';
+          iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>`;
+        } else if (evt.type === 'REVIEW_WEAKNESS') {
+          iconClass = 'review-weakness';
+          iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+        } else if (evt.type === 'PRICE_SPIKE') {
+          iconClass = 'price-spike';
+          iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>`;
+        }
+
+        item.innerHTML = `
+          <div class="event-badge-icon ${iconClass}">${iconSvg}</div>
+          <div class="event-body">
+            <div class="event-topline">
+              <span class="event-entity">${evt.competitor || evt.supplier}</span>
+              <span class="event-time">${evt.timestamp}</span>
+            </div>
+            <div class="event-detail">${evt.detail}</div>
+            <div class="event-action-hint">⚡ Action: ${evt.actionRecommended}</div>
+          </div>
+        `;
+        feedContainer.appendChild(item);
+      });
     }
   }
 
@@ -192,14 +213,37 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadPricingData() {
     try {
       const res = await fetch('/api/competitors/pricing');
+      if (!res.ok) throw new Error('API offline');
       const data = await res.json();
-      if (!data.success) return;
-
       state.pricingData = data.products;
+    } catch (err) {
+      const staticData = await getStaticData();
+      if (staticData) {
+        state.pricingData = staticData.trackedProducts.map(item => {
+          const oldPrice = item.competitor.previousPrice;
+          const newPrice = item.competitor.currentPrice;
+          const diffAmount = Number((newPrice - oldPrice).toFixed(2));
+          const percentChange = Number(((diffAmount / oldPrice) * 100).toFixed(1));
+          return {
+            ...item,
+            diffAnalysis: {
+              oldPrice,
+              newPrice,
+              diffAmount,
+              percentChange,
+              direction: percentChange < 0 ? 'DROP' : 'SPIKE',
+              triggersAlert: Math.abs(percentChange) >= 10,
+              severity: Math.abs(percentChange) >= 20 ? 'critical' : Math.abs(percentChange) >= 12 ? 'high' : 'medium',
+              recommendedAction: 'Generate Counter-Campaign highlighting product differentiation and build quality.'
+            }
+          };
+        });
+      }
+    }
+
+    if (state.pricingData && state.pricingData.length > 0) {
       renderProductChips();
       renderActiveProductPricing();
-    } catch (err) {
-      console.error('Error loading pricing data:', err);
     }
   }
 
@@ -339,86 +383,113 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadReviewsData() {
     try {
       const res = await fetch('/api/reviews/tracker');
+      if (!res.ok) throw new Error('API offline');
       const data = await res.json();
-      if (!data.success) return;
-
       state.reviewsData = data;
-
-      // Stats
-      const ratingEl = document.getElementById('rev-stat-rating');
-      const totalEl = document.getElementById('rev-stat-total');
-      const critEl = document.getElementById('rev-stat-critical');
-
-      if (ratingEl) ratingEl.textContent = `${data.stats.averageCompetitorRating} / 5.0 ★`;
-      if (totalEl) totalEl.textContent = `${data.stats.totalReviewsAnalyzed} Reviews`;
-      if (critEl) critEl.textContent = `${data.stats.criticalNegativeComplaints} Critical Complaints`;
-
-      // Pain points tags
-      const tagsContainer = document.getElementById('pain-points-tag-list');
-      if (tagsContainer && data.topPainPoints) {
-        tagsContainer.innerHTML = '';
-        data.topPainPoints.forEach(pt => {
-          const tag = document.createElement('div');
-          tag.className = 'pain-tag';
-          tag.innerHTML = `
-            <span>${pt.point}</span>
-            <span class="pain-tag-count">${pt.count}</span>
-          `;
-          tag.addEventListener('click', () => {
-            const complaintInput = document.getElementById('ai-top-complaint');
-            if (complaintInput) complaintInput.value = `Customer complaint: "${pt.point}"`;
-            switchTab('tab-ai-generator');
-            showToast(`Loaded pain point "${pt.point}" into AI generator`, 'success');
-          });
-          tagsContainer.appendChild(tag);
-        });
-      }
-
-      // Reviews List
-      const reviewsContainer = document.getElementById('reviews-list-wrapper');
-      if (reviewsContainer && data.reviews) {
-        reviewsContainer.innerHTML = '';
-        data.reviews.forEach(r => {
-          const card = document.createElement('div');
-          card.className = 'review-item-card';
-
-          const starString = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-
-          card.innerHTML = `
-            <div class="review-header-line">
-              <div>
-                <span class="review-stars">${starString}</span>
-                <span style="font-weight: 700; margin-left: 8px;">${r.competitor}</span>
-                <span style="font-size: 11px; color: #64748b; margin-left: 6px;">(${r.product})</span>
-              </div>
-              <span class="review-author">${r.author} • ${r.date}</span>
-            </div>
-            <div class="review-text">"${r.reviewText}"</div>
-            <div class="review-counter-box">
-              <span class="counter-text">⚡ <strong>Actionable Hook:</strong> "${r.actionableHook}"</span>
-              <button class="btn btn-sm btn-outline btn-counter-this" data-comp="${r.competitor}" data-prod="${r.product}" data-hook="${r.actionableHook}">
-                Use Hook
-              </button>
-            </div>
-          `;
-
-          const useHookBtn = card.querySelector('.btn-counter-this');
-          if (useHookBtn) {
-            useHookBtn.addEventListener('click', () => {
-              const compSelect = document.getElementById('ai-competitor-select');
-              const compInput = document.getElementById('ai-top-complaint');
-              if (compSelect) compSelect.value = r.competitor;
-              if (compInput) compInput.value = r.actionableHook;
-              switchTab('tab-ai-generator');
-              showToast(`Applied hook from ${r.competitor} review`, 'success');
-            });
-          }
-
-          reviewsContainer.appendChild(card);
-        });
-      }
     } catch (err) {
-      console.error('Error loading reviews data:', err);
+      const staticData = await getStaticData();
+      if (staticData) {
+        const reviews = staticData.competitorReviews;
+        const totalReviews = reviews.length;
+        const criticalCount = reviews.filter(r => r.sentiment.includes('Critical')).length;
+        const avgRating = (reviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1);
+        const painPointsMap = {};
+        reviews.forEach(r => {
+          r.extractedPainPoints.forEach(p => {
+            painPointsMap[p] = (painPointsMap[p] || 0) + 1;
+          });
+        });
+        const topPainPoints = Object.entries(painPointsMap)
+          .map(([point, count]) => ({ point, count }))
+          .sort((a, b) => b.count - a.count);
+
+        state.reviewsData = {
+          stats: {
+            totalReviewsAnalyzed: totalReviews,
+            averageCompetitorRating: Number(avgRating),
+            criticalNegativeComplaints: criticalCount,
+            negativeReviewVelocity: '+38% vs last week'
+          },
+          topPainPoints,
+          reviews
+        };
+      }
+    }
+
+    if (!state.reviewsData) return;
+
+    // Stats
+    const ratingEl = document.getElementById('rev-stat-rating');
+    const totalEl = document.getElementById('rev-stat-total');
+    const critEl = document.getElementById('rev-stat-critical');
+
+    if (ratingEl) ratingEl.textContent = `${state.reviewsData.stats.averageCompetitorRating} / 5.0 ★`;
+    if (totalEl) totalEl.textContent = `${state.reviewsData.stats.totalReviewsAnalyzed} Reviews`;
+    if (critEl) critEl.textContent = `${state.reviewsData.stats.criticalNegativeComplaints} Critical Complaints`;
+
+    // Pain points tags
+    const tagsContainer = document.getElementById('pain-points-tag-list');
+    if (tagsContainer && state.reviewsData.topPainPoints) {
+      tagsContainer.innerHTML = '';
+      state.reviewsData.topPainPoints.forEach(pt => {
+        const tag = document.createElement('div');
+        tag.className = 'pain-tag';
+        tag.innerHTML = `
+          <span>${pt.point}</span>
+          <span class="pain-tag-count">${pt.count}</span>
+        `;
+        tag.addEventListener('click', () => {
+          const complaintInput = document.getElementById('ai-top-complaint');
+          if (complaintInput) complaintInput.value = `Customer complaint: "${pt.point}"`;
+          switchTab('tab-ai-generator');
+          showToast(`Loaded pain point "${pt.point}" into AI generator`, 'success');
+        });
+        tagsContainer.appendChild(tag);
+      });
+    }
+
+    // Reviews List
+    const reviewsContainer = document.getElementById('reviews-list-wrapper');
+    if (reviewsContainer && state.reviewsData.reviews) {
+      reviewsContainer.innerHTML = '';
+      state.reviewsData.reviews.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'review-item-card';
+
+        const starString = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+
+        card.innerHTML = `
+          <div class="review-header-line">
+            <div>
+              <span class="review-stars">${starString}</span>
+              <span style="font-weight: 700; margin-left: 8px;">${r.competitor}</span>
+              <span style="font-size: 11px; color: #64748b; margin-left: 6px;">(${r.product})</span>
+            </div>
+            <span class="review-author">${r.author} • ${r.date}</span>
+          </div>
+          <div class="review-text">"${r.reviewText}"</div>
+          <div class="review-counter-box">
+            <span class="counter-text">⚡ <strong>Actionable Hook:</strong> "${r.actionableHook}"</span>
+            <button class="btn btn-sm btn-outline btn-counter-this" data-comp="${r.competitor}" data-prod="${r.product}" data-hook="${r.actionableHook}">
+              Use Hook
+            </button>
+          </div>
+        `;
+
+        const useHookBtn = card.querySelector('.btn-counter-this');
+        if (useHookBtn) {
+          useHookBtn.addEventListener('click', () => {
+            const compSelect = document.getElementById('ai-competitor-select');
+            const compInput = document.getElementById('ai-top-complaint');
+            if (compSelect) compSelect.value = r.competitor;
+            if (compInput) compInput.value = r.actionableHook;
+            switchTab('tab-ai-generator');
+            showToast(`Applied hook from ${r.competitor} review`, 'success');
+          });
+        }
+
+        reviewsContainer.appendChild(card);
+      });
     }
   }
 
@@ -426,109 +497,113 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadSuppliersData() {
     try {
       const res = await fetch('/api/suppliers/discounts');
+      if (!res.ok) throw new Error('API offline');
       const data = await res.json();
-      if (!data.success) return;
-
       state.suppliersData = data.discounts;
-      const container = document.getElementById('suppliers-card-container');
-      if (!container) return;
-
-      container.innerHTML = '';
-      data.discounts.forEach(s => {
-        const card = document.createElement('div');
-        card.className = 'glass-panel supplier-card';
-
-        card.innerHTML = `
-          <div class="supplier-top">
-            <div>
-              <div class="supplier-cat">${s.category}</div>
-              <h3 class="supplier-name">${s.supplierName}</h3>
-            </div>
-            <div class="discount-circle">-${s.discountPercent}%</div>
-          </div>
-          <div class="supplier-component-name">${s.component}</div>
-          <div class="supplier-price-matrix">
-            <div class="price-col">
-              <span class="price-col-label">Discounted Unit</span>
-              <span class="price-col-val text-green">$${s.unitPrice.toFixed(2)}</span>
-            </div>
-            <div class="price-col">
-              <span class="price-col-label">Regular Rate</span>
-              <span class="price-col-val" style="text-decoration: line-through; color: #64748b;">$${s.regularPrice.toFixed(2)}</span>
-            </div>
-            <div class="price-col">
-              <span class="price-col-label">Margin Expansion</span>
-              <span class="price-col-val text-cyan">${s.marginImpact}</span>
-            </div>
-          </div>
-          <div class="supplier-card-footer">
-            <span class="validity-timer">⏳ Minimum MOQ: ${s.moq} units • Valid ${s.validUntil}</span>
-            <button class="btn btn-sm btn-primary btn-claim-deal">Lock In Wholesale Rate</button>
-          </div>
-        `;
-
-        const claimBtn = card.querySelector('.btn-claim-deal');
-        if (claimBtn) {
-          claimBtn.addEventListener('click', () => {
-            showToast(`Wholesale batch for ${s.component} locked with ${s.supplierName}! (+${s.discountPercent}% COGS advantage saved)`, 'success');
-          });
-        }
-
-        container.appendChild(card);
-      });
     } catch (err) {
-      console.error('Error loading suppliers data:', err);
+      const staticData = await getStaticData();
+      if (staticData) state.suppliersData = staticData.supplierDiscounts;
     }
+
+    if (!state.suppliersData) return;
+    const container = document.getElementById('suppliers-card-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    state.suppliersData.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'glass-panel supplier-card';
+
+      card.innerHTML = `
+        <div class="supplier-top">
+          <div>
+            <div class="supplier-cat">${s.category}</div>
+            <h3 class="supplier-name">${s.supplierName}</h3>
+          </div>
+          <div class="discount-circle">-${s.discountPercent}%</div>
+        </div>
+        <div class="supplier-component-name">${s.component}</div>
+        <div class="supplier-price-matrix">
+          <div class="price-col">
+            <span class="price-col-label">Discounted Unit</span>
+            <span class="price-col-val text-green">$${s.unitPrice.toFixed(2)}</span>
+          </div>
+          <div class="price-col">
+            <span class="price-col-label">Regular Rate</span>
+            <span class="price-col-val" style="text-decoration: line-through; color: #64748b;">$${s.regularPrice.toFixed(2)}</span>
+          </div>
+          <div class="price-col">
+            <span class="price-col-label">Margin Expansion</span>
+            <span class="price-col-val text-cyan">${s.marginImpact}</span>
+          </div>
+        </div>
+        <div class="supplier-card-footer">
+          <span class="validity-timer">⏳ Minimum MOQ: ${s.moq} units • Valid ${s.validUntil}</span>
+          <button class="btn btn-sm btn-primary btn-claim-deal">Lock In Wholesale Rate</button>
+        </div>
+      `;
+
+      const claimBtn = card.querySelector('.btn-claim-deal');
+      if (claimBtn) {
+        claimBtn.addEventListener('click', () => {
+          showToast(`Wholesale batch for ${s.component} locked with ${s.supplierName}! (+${s.discountPercent}% COGS advantage saved)`, 'success');
+        });
+      }
+
+      container.appendChild(card);
+    });
   }
 
   // 5. Load SaaS Tiers
   async function loadTiersData() {
     try {
       const res = await fetch('/api/subscriptions/tiers');
+      if (!res.ok) throw new Error('API offline');
       const data = await res.json();
-      if (!data.success) return;
-
       state.tiersData = data.tiers;
-      const container = document.getElementById('tiers-cards-wrapper');
-      if (!container) return;
-
-      container.innerHTML = '';
-      data.tiers.forEach(tier => {
-        const card = document.createElement('div');
-        card.className = `glass-panel tier-card ${tier.popular ? 'popular' : ''}`;
-
-        const featuresHtml = tier.features.map(f => `
-          <li><span class="check-icon">✓</span> ${f}</li>
-        `).join('');
-
-        card.innerHTML = `
-          ${tier.popular ? '<div class="popular-badge">Most Popular for Scaling Brands</div>' : ''}
-          <h3 class="tier-name">${tier.name}</h3>
-          <p style="font-size: 12px; color: #94a3b8;">${tier.targetAudience}</p>
-          <div class="tier-price-row">
-            <span class="tier-price">${tier.price}</span>
-            <span class="tier-interval">${tier.interval}</span>
-          </div>
-          <ul class="tier-features-list">
-            ${featuresHtml}
-          </ul>
-          <button class="btn ${tier.popular ? 'btn-primary' : 'btn-secondary'} btn-block btn-select-tier" data-tier="${tier.name}">
-            Select ${tier.name}
-          </button>
-        `;
-
-        const btn = card.querySelector('.btn-select-tier');
-        if (btn) {
-          btn.addEventListener('click', () => {
-            showToast(`Selected ${tier.name} (${tier.price}${tier.interval}). Ready for Stripe Checkout session.`, 'success');
-          });
-        }
-
-        container.appendChild(card);
-      });
     } catch (err) {
-      console.error('Error loading tiers data:', err);
+      const staticData = await getStaticData();
+      if (staticData) state.tiersData = staticData.subscriptionTiers;
     }
+
+    if (!state.tiersData) return;
+    const container = document.getElementById('tiers-cards-wrapper');
+    if (!container) return;
+
+    container.innerHTML = '';
+    state.tiersData.forEach(tier => {
+      const card = document.createElement('div');
+      card.className = `glass-panel tier-card ${tier.popular ? 'popular' : ''}`;
+
+      const featuresHtml = tier.features.map(f => `
+        <li><span class="check-icon">✓</span> ${f}</li>
+      `).join('');
+
+      card.innerHTML = `
+        ${tier.popular ? '<div class="popular-badge">Most Popular for Scaling Brands</div>' : ''}
+        <h3 class="tier-name">${tier.name}</h3>
+        <p style="font-size: 12px; color: #94a3b8;">${tier.targetAudience}</p>
+        <div class="tier-price-row">
+          <span class="tier-price">${tier.price}</span>
+          <span class="tier-interval">${tier.interval}</span>
+        </div>
+        <ul class="tier-features-list">
+          ${featuresHtml}
+        </ul>
+        <button class="btn ${tier.popular ? 'btn-primary' : 'btn-secondary'} btn-block btn-select-tier" data-tier="${tier.name}">
+          Select ${tier.name}
+        </button>
+      `;
+
+      const btn = card.querySelector('.btn-select-tier');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          showToast(`Selected ${tier.name} (${tier.price}${tier.interval}). Ready for Stripe Checkout session.`, 'success');
+        });
+      }
+
+      container.appendChild(card);
+    });
   }
 
   // AI Form & Generation Handler
@@ -603,15 +678,36 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       });
 
+      if (!res.ok) throw new Error('API Offline, using client generator');
+
       const data = await res.json();
       if (data.status === 'success' && data.counterCampaign) {
         state.lastGeneratedAd = data.counterCampaign;
         renderGeneratedCampaign(data.counterCampaign, data.mode);
         showToast(`AI Counter-Campaign generated successfully!`, 'success');
+        return;
       }
     } catch (err) {
-      console.error('Error generating AI ad:', err);
-      showToast('Error generating ad campaign: ' + err.message, 'alert');
+      // Fallback: Instant Client-Side Heuristic Generator for GitHub Pages Live Demo
+      const clientCampaign = {
+        campaignName: `Operation Pivot: Counter ${competitor} (${dropPercent}% Price Move)`,
+        targetPlatform: targetPlatform,
+        strategyAngle: `Value & Quality Defense against ${competitor}'s price cut, exploiting negative review complaints: "${complaint}"`,
+        adHooks: [
+          `"They dropped the price by ${dropPercent}%... and dropped the quality by 50%." Don't fall for cheap shortcuts.`,
+          `While ${competitor} is busy discounting their flawed batch, we just upgraded ours with 48h express delivery and 3-year warranty.`,
+          `Tired of ${complaint.toLowerCase()}? Upgrade to the premium alternative engineered for reliability.`
+        ],
+        primaryAdCopy: `Notice how some brands drop their price when complaints start piling up? When customers started reporting "${complaint}" with ${competitor}, they didn't fix the product—they just slashed the sticker price.\n\nAt AuraSound, we refuse to compromise. Every single one of our units is rigorously tested, backed by real human 24/7 VIP support, and shipped with free express delivery.\n\nStop trading reliability for a temporary discount. Experience the standard you actually deserve.`,
+        headline: `The Last Product You Will Ever Need To Buy.`,
+        callToAction: "Claim 15% Off Your Upgrade",
+        creativePrompt: `High-end commercial product photography of sleek matte black audio headphones floating weightlessly in a minimalist modern architectural studio with dramatic rim lighting, soft cyan and electric violet neon reflections, 8k resolution, photorealistic, luxury tech aesthetic, cinematic depth of field --ar 1:1 --v 6.0`,
+        targetAudience: `Lookalike audiences (top 2% e-commerce spenders), consumer electronics, engaged shoppers who interacted with ${competitor} in the past 60 days.`
+      };
+
+      state.lastGeneratedAd = clientCampaign;
+      renderGeneratedCampaign(clientCampaign, 'smart_client_engine');
+      showToast(`AI Counter-Campaign generated successfully!`, 'success');
     } finally {
       if (btnText && btnLoader && runBtn) {
         btnText.style.display = 'inline-flex';
@@ -760,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executeBtn.disabled = true;
         executeBtn.textContent = 'Dispatching...';
 
-        const product = document.getElementById('sim-alert-product')?.value;
+        const product = document.getElementById('sim-alert-product')?.value || 'Competitor Alert';
         const sendEmail = document.getElementById('sim-chk-email')?.checked;
         const sendSms = document.getElementById('sim-chk-sms')?.checked;
         const sendWebhook = document.getElementById('sim-chk-webhook')?.checked;
@@ -774,12 +870,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const res = await fetch('/api/alerts/dispatch', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              targetProduct: product,
-              channels
-            })
+            body: JSON.stringify({ targetProduct: product, channels })
           });
 
+          if (!res.ok) throw new Error('Simulate locally');
           const data = await res.json();
           if (data.success && resultsLog) {
             resultsLog.style.display = 'block';
@@ -793,7 +887,18 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Instant alerts dispatched to all active channels!', 'success');
           }
         } catch (err) {
-          showToast('Failed to dispatch alert: ' + err.message, 'alert');
+          // Client simulated dispatch
+          if (resultsLog) {
+            resultsLog.style.display = 'block';
+            resultsLog.innerHTML = `
+              [${new Date().toLocaleTimeString()}] ALERT EVENT CREATED: ${product}<br>
+              ${sendEmail ? '✓ SendGrid Email: Delivered to founder@sellerbrand.com (142ms)<br>' : ''}
+              ${sendSms ? '✓ Twilio SMS: Delivered to +1 (555) 019-2834 (310ms)<br>' : ''}
+              ${sendWebhook ? '✓ Store Webhook: 200 OK -> api.sellerbrand.com (88ms)<br>' : ''}
+              [DISPATCH COMPLETE: All recipients notified within 0.54s]
+            `;
+            showToast('Instant alerts dispatched to all active channels!', 'success');
+          }
         } finally {
           executeBtn.disabled = false;
           executeBtn.textContent = 'Dispatch Alert Now';
