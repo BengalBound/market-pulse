@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabNavigation();
     setupAlertModal();
     setupTrackModal();
+    setupClientModal();
     if (window.MarketPitchDeck) {
       window.MarketPitchDeck.init();
     }
@@ -57,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
       loadPricingData(),
       loadReviewsData(),
       loadSuppliersData(),
-      loadTiersData()
+      loadTiersData(),
+      loadAdminData()
     ]);
 
     setupQuickActions();
@@ -1041,6 +1043,342 @@ document.addEventListener('DOMContentLoaded', () => {
           renderActiveProductPricing();
           closeModal();
           showToast(`🎉 Initialized tracking for ${name}! Initial baseline price $${compPrice.toFixed(2)} logged.`, 'success');
+        } finally {
+          if (btnText && btnLoader && submitBtn) {
+            btnText.style.display = 'inline-flex';
+            btnLoader.style.display = 'none';
+            submitBtn.disabled = false;
+          }
+        }
+      });
+    }
+  }
+
+  // 6. Load Multi-Tenant Admin Clients Data
+  async function loadAdminData() {
+    try {
+      const res = await fetch('/api/admin/clients');
+      if (!res.ok) throw new Error('API offline');
+      const data = await res.json();
+      state.clientsData = data.clients;
+      renderAdminView(data.stats, data.clients);
+    } catch (err) {
+      // Static fallback clients
+      const fallbackClients = [
+        {
+          id: 'ws-101',
+          brandName: 'AuraSound Audio DTC',
+          slug: 'aurasound',
+          ownerEmail: 'alex@aurasound.com',
+          tier: 'Growth Merchant',
+          monthlyPrice: 199,
+          status: 'ACTIVE',
+          trackedSkus: 24,
+          skuLimit: 100,
+          aiGenerationsUsed: 42,
+          scrapeFrequency: 'Hourly',
+          joinedDate: 'Sep 12, 2026'
+        },
+        {
+          id: 'ws-102',
+          brandName: 'ApexGrip Gaming Gear',
+          slug: 'apexgrip',
+          ownerEmail: 'mark@apexgrip.io',
+          tier: 'Enterprise Brand',
+          monthlyPrice: 499,
+          status: 'ACTIVE',
+          trackedSkus: 88,
+          skuLimit: 500,
+          aiGenerationsUsed: 184,
+          scrapeFrequency: '15 Minutes',
+          joinedDate: 'Sep 04, 2026'
+        },
+        {
+          id: 'ws-103',
+          brandName: 'NordicThermal Drinkware',
+          slug: 'nordicthermal',
+          ownerEmail: 'sara@nordicthermal.store',
+          tier: 'Starter Seller',
+          monthlyPrice: 49,
+          status: 'ACTIVE',
+          trackedSkus: 8,
+          skuLimit: 10,
+          aiGenerationsUsed: 19,
+          scrapeFrequency: 'Daily',
+          joinedDate: 'Sep 18, 2026'
+        },
+        {
+          id: 'ws-104',
+          brandName: 'VoltFlex Charging Co',
+          slug: 'voltflex',
+          ownerEmail: 'ken@voltflex.tech',
+          tier: 'Growth Merchant',
+          monthlyPrice: 199,
+          status: 'ACTIVE',
+          trackedSkus: 45,
+          skuLimit: 100,
+          aiGenerationsUsed: 88,
+          scrapeFrequency: 'Hourly',
+          joinedDate: 'Aug 29, 2026'
+        },
+        {
+          id: 'ws-105',
+          brandName: 'LuxeGlow Beauty Labs',
+          slug: 'luxeglow',
+          ownerEmail: 'chloe@luxeglow.com',
+          tier: 'Growth Merchant',
+          monthlyPrice: 199,
+          status: 'TRIALING',
+          trackedSkus: 14,
+          skuLimit: 100,
+          aiGenerationsUsed: 12,
+          scrapeFrequency: 'Hourly',
+          joinedDate: 'Yesterday'
+        }
+      ];
+
+      state.clientsData = fallbackClients;
+      const totalMrr = fallbackClients.reduce((acc, c) => acc + (c.status === 'ACTIVE' ? c.monthlyPrice : 0), 0);
+      renderAdminView({
+        totalClients: fallbackClients.length,
+        totalMrr: `$${totalMrr.toLocaleString()}`,
+        arr: `$${(totalMrr * 12).toLocaleString()}`,
+        totalTrackedSkus: fallbackClients.reduce((acc, c) => acc + c.trackedSkus, 0),
+        systemHealth: '100% Operational'
+      }, fallbackClients);
+    }
+  }
+
+  function renderAdminView(stats, clients) {
+    const clientsEl = document.getElementById('admin-stat-clients');
+    const mrrEl = document.getElementById('admin-stat-mrr');
+    const arrEl = document.getElementById('admin-stat-arr');
+    const skusEl = document.getElementById('admin-stat-skus');
+    const healthEl = document.getElementById('admin-stat-health');
+    const badgeEl = document.getElementById('admin-clients-count-badge');
+    const tbody = document.getElementById('admin-clients-tbody');
+
+    if (clientsEl) clientsEl.textContent = `${stats.totalClients || clients.length} Brands`;
+    if (mrrEl) mrrEl.textContent = `${stats.totalMrr || '$946'} / mo`;
+    if (arrEl) arrEl.textContent = `${stats.arr || '$11,352'} ARR Run-Rate`;
+    if (skusEl) skusEl.textContent = `${stats.totalTrackedSkus || 179} SKUs`;
+    if (healthEl) healthEl.textContent = stats.systemHealth || '100% Online';
+    if (badgeEl) badgeEl.textContent = `${clients.length} Workspaces`;
+
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    clients.forEach(c => {
+      const tr = document.createElement('tr');
+      const isTrial = c.status === 'TRIALING';
+      const statusBadge = isTrial
+        ? `<span class="severity-pill" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4);">TRIALING</span>`
+        : `<span class="severity-pill green">ACTIVE</span>`;
+
+      const tierBadge = c.tier.includes('Enterprise')
+        ? `<span class="ai-badge">${c.tier}</span>`
+        : c.tier.includes('Growth')
+        ? `<span class="tab-badge profit-badge">${c.tier}</span>`
+        : `<span class="tab-badge">${c.tier}</span>`;
+
+      const usagePercent = Math.min(100, Math.round((c.trackedSkus / c.skuLimit) * 100));
+
+      tr.innerHTML = `
+        <td>
+          <div style="font-weight: 700; color: #fff;">${escapeHtml(c.brandName)}</div>
+          <div style="font-size: 11px; color: #64748b; font-family: monospace;">/${escapeHtml(c.slug)}</div>
+        </td>
+        <td style="color: #cbd5e1;">${escapeHtml(c.ownerEmail)}</td>
+        <td>${tierBadge}</td>
+        <td style="font-family: monospace; font-weight: 700; color: #10b981;">$${c.monthlyPrice}/mo</td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden; min-width: 60px;">
+              <div style="width: ${usagePercent}%; height: 100%; background: #00f0ff;"></div>
+            </div>
+            <span style="font-size: 11px; font-family: monospace;">${c.trackedSkus}/${c.skuLimit}</span>
+          </div>
+        </td>
+        <td style="color: #94a3b8; font-size: 12px;">${c.scrapeFrequency}</td>
+        <td>${statusBadge}</td>
+        <td>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-sm btn-outline btn-impersonate-client" data-brand="${escapeHtml(c.brandName)}" title="Switch active workspace">
+              View As Client
+            </button>
+            <button class="btn btn-sm btn-ghost btn-copy-invite" data-brand="${escapeHtml(c.brandName)}" title="Copy Magic Login Link">
+              Copy Link
+            </button>
+          </div>
+        </td>
+      `;
+
+      // Impersonate / switch client
+      const viewBtn = tr.querySelector('.btn-impersonate-client');
+      if (viewBtn) {
+        viewBtn.addEventListener('click', () => {
+          const wsSelect = document.getElementById('workspace-switch');
+          if (wsSelect) {
+            let exists = false;
+            for (let i = 0; i < wsSelect.options.length; i++) {
+              if (wsSelect.options[i].text.includes(c.brandName)) {
+                wsSelect.selectedIndex = i;
+                exists = true;
+                break;
+              }
+            }
+            if (!exists) {
+              const opt = document.createElement('option');
+              opt.value = c.slug;
+              opt.textContent = `${c.brandName} (Active Client)`;
+              wsSelect.appendChild(opt);
+              wsSelect.value = c.slug;
+            }
+          }
+          switchTab('tab-pulse');
+          showToast(`Now viewing workspace for ${c.brandName}!`, 'success');
+        });
+      }
+
+      // Copy invite link
+      const copyBtn = tr.querySelector('.btn-copy-invite');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+          const inviteUrl = `https://marketpulse.ai/invite/${c.slug}?auth=token_${Date.now()}`;
+          navigator.clipboard.writeText(inviteUrl);
+          showToast(`Copied magic invite link for ${c.brandName}!`, 'success');
+        });
+      }
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Setup Onboard Client Modal
+  function setupClientModal() {
+    const openBtn = document.getElementById('btn-open-client-modal');
+    const modal = document.getElementById('client-modal');
+    const closeBtn = document.getElementById('client-modal-close');
+    const cancelBtn = document.getElementById('client-modal-cancel');
+    const form = document.getElementById('form-onboard-client');
+    const submitBtn = document.getElementById('btn-submit-client');
+    const btnText = document.getElementById('client-btn-text');
+    const btnLoader = document.getElementById('client-btn-loader');
+
+    if (openBtn && modal) {
+      openBtn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+    }
+
+    const closeModal = () => {
+      if (modal) modal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (btnText && btnLoader && submitBtn) {
+          btnText.style.display = 'none';
+          btnLoader.style.display = 'inline-flex';
+          submitBtn.disabled = true;
+        }
+
+        const brandName = document.getElementById('client-brand-name')?.value || 'New Client Store';
+        const ownerEmail = document.getElementById('client-owner-email')?.value || 'owner@client.com';
+        const tier = document.getElementById('client-tier-select')?.value || 'Growth Merchant';
+        const frequency = document.getElementById('client-frequency-select')?.value || 'Hourly';
+        const customLimit = document.getElementById('client-custom-limit')?.value;
+
+        const tierPrices = { 'Starter Seller': 49, 'Growth Merchant': 199, 'Enterprise Brand': 499 };
+        const price = tierPrices[tier] || 199;
+        const slug = brandName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+        try {
+          const res = await fetch('/api/admin/clients', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              brandName,
+              ownerEmail,
+              tier,
+              customLimit,
+              scrapeFrequency: frequency
+            })
+          });
+
+          let newClient = null;
+          if (res.ok) {
+            const data = await res.json();
+            newClient = data.client;
+          } else {
+            throw new Error('Static fallback');
+          }
+
+          if (newClient) {
+            state.clientsData.unshift(newClient);
+            const totalMrr = state.clientsData.reduce((acc, c) => acc + (c.status === 'ACTIVE' ? c.monthlyPrice : 0), 0);
+            renderAdminView({
+              totalClients: state.clientsData.length,
+              totalMrr: `$${totalMrr.toLocaleString()}`,
+              arr: `$${(totalMrr * 12).toLocaleString()}`,
+              totalTrackedSkus: state.clientsData.reduce((acc, c) => acc + c.trackedSkus, 0),
+              systemHealth: '100% Operational'
+            }, state.clientsData);
+
+            // Add to workspace dropdown
+            const wsSelect = document.getElementById('workspace-switch');
+            if (wsSelect) {
+              const opt = document.createElement('option');
+              opt.value = newClient.slug;
+              opt.textContent = `${newClient.brandName} (Active Client)`;
+              wsSelect.appendChild(opt);
+            }
+
+            closeModal();
+            showToast(`🎉 Provisioned '${brandName}' workspace! Added +$${price}/mo MRR.`, 'success');
+          }
+        } catch (err) {
+          // Client-side fallback
+          const clientObj = {
+            id: `ws-${Date.now()}`,
+            brandName,
+            slug,
+            ownerEmail,
+            tier,
+            monthlyPrice: price,
+            status: 'ACTIVE',
+            trackedSkus: 0,
+            skuLimit: parseInt(customLimit) || (tier === 'Starter Seller' ? 10 : tier === 'Enterprise Brand' ? 500 : 100),
+            aiGenerationsUsed: 0,
+            scrapeFrequency: frequency,
+            joinedDate: 'Today (Provisioned)'
+          };
+
+          state.clientsData.unshift(clientObj);
+          const totalMrr = state.clientsData.reduce((acc, c) => acc + (c.status === 'ACTIVE' ? c.monthlyPrice : 0), 0);
+          renderAdminView({
+            totalClients: state.clientsData.length,
+            totalMrr: `$${totalMrr.toLocaleString()}`,
+            arr: `$${(totalMrr * 12).toLocaleString()}`,
+            totalTrackedSkus: state.clientsData.reduce((acc, c) => acc + c.trackedSkus, 0),
+            systemHealth: '100% Operational'
+          }, state.clientsData);
+
+          const wsSelect = document.getElementById('workspace-switch');
+          if (wsSelect) {
+            const opt = document.createElement('option');
+            opt.value = clientObj.slug;
+            opt.textContent = `${clientObj.brandName} (Active Client)`;
+            wsSelect.appendChild(opt);
+          }
+
+          closeModal();
+          showToast(`🎉 Provisioned '${brandName}' workspace! Added +$${price}/mo MRR.`, 'success');
         } finally {
           if (btnText && btnLoader && submitBtn) {
             btnText.style.display = 'inline-flex';
