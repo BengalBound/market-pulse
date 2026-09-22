@@ -156,8 +156,37 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 | `/api/ai/generate-ad` | `POST` | Live / Contextual direct-response ad copy generation |
 | `/api/alerts/dispatch` | `POST` | Multi-channel alert delivery test (Email, SMS, Webhook) |
 | `/api/subscriptions/tiers` | `GET` | SaaS tier pricing ($49 Starter, $199 Pro, $499 Enterprise) |
+| `/api/admin/clients` | `GET` | Super Admin KPI metrics (MRR, ARR, active workspaces, crawler health) & client directory |
+| `/api/admin/clients` | `POST` | Onboard new client workspace, configure tier & SKU allocation, generate magic invite link |
 
 ---
+
+## 👥 Multi-Tenant Client Management & Super Admin Console
+
+MarketPulse AI includes a dedicated **Super Admin Console** (`#admin`) designed for platform operators to provision, monitor, and manage client brand workspaces.
+
+### 🔑 How to Add New Clients & Manage Workspaces:
+1. **Navigate to the Admin Console**:
+   - In the navigation bar, click the **"Admin Console"** tab, or navigate directly to `http://localhost:3000/#admin`.
+2. **Review Real-Time Platform KPIs**:
+   - **Active Client Brands**: Total isolated client workspaces currently active.
+   - **Platform MRR / ARR**: Live monthly and annual recurring revenue run-rate across all subscriber accounts.
+   - **Total Monitored SKUs**: Combined scraping queue size across all tenant stores.
+   - **Distributed Scraper Cluster Health**: Real-time operational status of the proxy crawler fleet.
+3. **Provision a New Client Workspace**:
+   - Click the **"+ Onboard New Client Workspace"** button in the top right.
+   - Enter the client's **Brand / Company Name** (e.g. *ApexGrip Gaming Gear*, *Veloce Cycling Labs*).
+   - Enter the **Owner Email** (where credentials and alert summaries will be sent).
+   - Select the client's **Subscription Tier**:
+     - **Starter Seller**: $49/mo (10 SKU limit, daily scans)
+     - **Growth Merchant**: $199/mo (100 SKU limit, hourly scans, SMS dispatch)
+     - **Enterprise Brand**: $499/mo (Custom / 500+ SKU limit, 15-min scans, priority proxies)
+   - Set the **Initial Tracked SKU Allocation**.
+   - Click **"Provision Workspace & Generate Magic Link"**.
+4. **Immediate Activation**:
+   - The system creates an isolated tenant record, assigns a unique workspace ID, connects a Stripe customer reference, and outputs a one-time setup link.
+   - Platform MRR, ARR, and active workspace metrics dynamically update across the dashboard.
+
 
 ## 💼 Business Model & Unit Economics
 

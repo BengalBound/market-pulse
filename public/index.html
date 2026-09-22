@@ -111,6 +111,11 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           SaaS Tiers & Roadmap
         </button>
+        <button class="nav-tab" data-tab="tab-admin" id="tab-btn-admin" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Client Admin
+          <span class="tab-badge" style="background: rgba(0, 240, 255, 0.2); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.4);">Super Admin</span>
+        </button>
       </div>
 
       <div class="workspace-selector">
@@ -502,6 +507,122 @@
             <div class="tech-pill">
               <span class="tech-name">Multi-Channel Alerts</span>
               <span class="tech-desc">SendGrid, Twilio SMS & Webhook dispatch</span>
+      <!-- TAB 7: CLIENT ADMIN & MULTI-TENANCY CONSOLE -->
+      <section class="tab-pane" id="tab-admin">
+        <div class="section-heading-row">
+          <div>
+            <div class="flex-align-center">
+              <h1 class="page-title">Client Workspaces & Multi-Tenancy Hub</h1>
+              <span class="ai-spark-tag" style="background: rgba(0, 240, 255, 0.15); border-color: var(--accent-cyan); color: #00f0ff;">Super Admin Console</span>
+            </div>
+            <p class="page-description">Provision client seller workspaces, assign custom SKU tracking limits, monitor MRR, and inspect multi-tenant data pipelines.</p>
+          </div>
+          <button class="btn btn-primary" id="btn-open-client-modal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            + Onboard New Client Workspace
+          </button>
+        </div>
+
+        <!-- Super Admin KPI Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Active Client Brands</span>
+              <span class="metric-icon-wrap cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-cyan" id="admin-stat-clients">5 Brands</div>
+            <div class="metric-subtext">Multi-tenant PostgreSQL isolated</div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Platform MRR</span>
+              <span class="metric-icon-wrap green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-green" id="admin-stat-mrr">$946 / mo</div>
+            <div class="metric-subtext" id="admin-stat-arr">$11,352 ARR Run-Rate</div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Total Monitored SKUs</span>
+              <span class="metric-icon-wrap violet">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-violet" id="admin-stat-skus">179 SKUs</div>
+            <div class="metric-subtext">Active daily/hourly crawl queues</div>
+          </div>
+
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Scraper Cluster Status</span>
+              <span class="metric-icon-wrap cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </span>
+            </div>
+            <div class="metric-value highlight-green" id="admin-stat-health">100% Online</div>
+            <div class="metric-subtext">BullMQ + Residential Proxies</div>
+          </div>
+        </div>
+
+        <!-- Clients Management Table -->
+        <div class="glass-panel" style="padding: 24px; margin-top: 24px;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Active Client Workspaces & Subscriptions</h2>
+              <p class="panel-subtitle">Manage accounts, view usage limits, and impersonate client dashboards</p>
+            </div>
+            <span class="tab-badge" id="admin-clients-count-badge">5 Workspaces</span>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="margin-comparison-table admin-client-table" id="admin-client-table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>Client Brand</th>
+                  <th>Owner Email</th>
+                  <th>Subscription Tier</th>
+                  <th>MRR</th>
+                  <th>SKU Crawl Usage</th>
+                  <th>Frequency</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-clients-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Multi-Tenancy Architecture Box -->
+        <div class="glass-panel mt-xl" style="padding: 24px;">
+          <h3 class="panel-title" style="color: var(--accent-cyan);">🔐 Multi-Tenant Enterprise Data Security & Isolation</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 16px 0; line-height: 1.6;">
+            Every client operates in a secure, isolated workspace. Competitor lists, profit margins, and proprietary review alerts are strictly scoped by <code>workspaceId</code> in PostgreSQL and TimescaleDB hypertables.
+          </p>
+          <div class="tech-stack-row">
+            <div class="tech-pill">
+              <span class="tech-name">Workspace Scoping</span>
+              <span class="tech-desc">Strict row-level security per tenant</span>
+            </div>
+            <div class="tech-pill">
+              <span class="tech-name">Stripe Customer Linking</span>
+              <span class="tech-desc">Automated tier limit provisioning</span>
+            </div>
+            <div class="tech-pill">
+              <span class="tech-name">Dedicated Proxy Routing</span>
+              <span class="tech-desc">Isolated rate limits per merchant</span>
+            </div>
+            <div class="tech-pill">
+              <span class="tech-name">Magic Link Invites</span>
+              <span class="tech-desc">Instant 1-click merchant onboarding</span>
             </div>
           </div>
         </div>
@@ -662,6 +783,69 @@
             <button type="submit" class="btn btn-primary" id="btn-submit-track">
               <span id="track-btn-text">Initialize Tracking & Crawl</span>
               <span id="track-btn-loader" style="display: none;">Crawling URL...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Onboard New Client Workspace Modal -->
+    <div class="modal-backdrop" id="client-modal" style="display: none;">
+      <div class="modal-card glass-panel" style="max-width: 580px;">
+        <div class="modal-header">
+          <div class="flex-align-center">
+            <div class="logo-icon-pulse" style="width: 32px; height: 32px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            </div>
+            <div>
+              <h3 class="modal-title">Onboard New Client Workspace</h3>
+              <p style="font-size: 11px; color: #94a3b8;">Provision a multi-tenant workspace and generate invitation link</p>
+            </div>
+          </div>
+          <button class="btn-icon" id="client-modal-close">✕</button>
+        </div>
+
+        <form id="form-onboard-client" class="ai-form">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Client Store / Brand Name</label>
+              <input type="text" class="form-input" id="client-brand-name" placeholder="e.g. ZenFit Apparel, VoltAudio" required value="ZenFit Activewear LLC">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Client Owner Email</label>
+              <input type="email" class="form-input" id="client-owner-email" placeholder="owner@clientbrand.com" required value="founder@zenfit.store">
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Assigned Subscription Tier</label>
+              <select class="form-input" id="client-tier-select">
+                <option value="Starter Seller">Starter Seller ($49/mo • 10 SKUs)</option>
+                <option value="Growth Merchant" selected>Growth Merchant ($199/mo • 100 SKUs)</option>
+                <option value="Enterprise Brand">Enterprise Brand ($499/mo • 500 SKUs)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Crawl Frequency</label>
+              <select class="form-input" id="client-frequency-select">
+                <option value="Daily">Daily Scheduled Scrape</option>
+                <option value="Hourly" selected>Hourly High-Frequency (Pro)</option>
+                <option value="15 Minutes">Sub-15 Minute Real-Time (Enterprise)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Custom SKU Crawl Limit (Optional)</label>
+            <input type="number" class="form-input" id="client-custom-limit" placeholder="Leave empty for tier default (100)">
+          </div>
+
+          <div class="modal-footer" style="padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 8px;">
+            <button type="button" class="btn btn-secondary" id="client-modal-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-client">
+              <span id="client-btn-text">Provision Workspace & Generate Magic Link</span>
+              <span id="client-btn-loader" style="display: none;">Provisioning Tenant...</span>
             </button>
           </div>
         </form>

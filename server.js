@@ -10,6 +10,7 @@ const suppliersRoutes = require('./src/routes/suppliers.routes');
 const aiRoutes = require('./src/routes/ai.routes');
 const alertsRoutes = require('./src/routes/alerts.routes');
 const tiersRoutes = require('./src/routes/tiers.routes');
+const adminRoutes = require('./src/routes/admin.routes');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/suppliers/discounts', suppliersRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/subscriptions/tiers', tiersRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Fallback to index.html for SPA client navigation
 app.get('*', (req, res) => {
